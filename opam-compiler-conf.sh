@@ -115,7 +115,7 @@ case "$1" in
         ;;
     configure)
         # configure the ocaml distribution for compilation
-        ./configure --prefix $PREFIX --no-tk --no-graph
+        ./configure --prefix $PREFIX --no-tk #--no-graph
         ;;
     install)
         # check that ./configure was run
