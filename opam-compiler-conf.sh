@@ -1,6 +1,45 @@
 # the path to the OPAM installation
 OPAM=~/.opam
 
+USAGE="available commands: get-switch get-conf configure\
+                           install switch reinstall remove|uninstall\
+                           help"
+
+case $1 in
+    ""|help)
+        echo $USAGE
+        echo
+        cat <<EOF
+You should run this script from the directory of an OCaml compiler
+source that you wish to install as an OPAM switch. It was designed for
+short-lived experiments with experimental branches of the compiler, so
+it infers the switch name from DCVS information (only git is
+currently supported).
+
+get-switch: returns the name of the OPAM switch inferred from DCVS information
+
+get-conf:   returns the OPAM configuration file inferred
+
+configure:  runs the ./configure script of the OCaml distribution
+            (OCaml needs to be told at ./configure time where it will
+             be installed, and we handle this for you, knowing where
+             OPAM will expect its stuff)
+
+install:    setups the OPAM switch and install it (will run 'make install')
+            you need to have compiled the distribution first 
+
+switch:     switches to this new OPAM compiler (you'll still need to setup env)
+
+reinstall:  reinstall the OPAM switch (useful if you changed the compiler source)
+
+uninstall:  removes the OPAM switch and its configuration
+
+help:       this message
+EOF
+        exit 0
+        ;;
+esac
+
 # OPAM will need version information to accept package installation
 # this is useful if you try to install packages that only support
 # specific OCaml versions, eg. ">= 3.12": the version here needs to
@@ -69,9 +108,6 @@ env: [\n\
 ]\n\
 "
 
-USAGE="available commands: get-switch get-conf configure\
-                           install switch reinstall remove|uninstall\
-                           help"
 
 check_is_configured() {
     if [ ! -f "config/Makefile" ]
@@ -115,7 +151,7 @@ case "$1" in
         ;;
     configure)
         # configure the ocaml distribution for compilation
-        ./configure --prefix $PREFIX --no-tk #--no-graph
+        ./configure --prefix $PREFIX --no-tk
         ;;
     install)
         # check that ./configure was run
@@ -146,39 +182,7 @@ case "$1" in
         opam switch remove $SWITCH
         rm $OPAM_COMP_PATH
         ;;
-    help)
-        echo $USAGE
-        echo
-        cat <<EOF
-You should run this script from the directory of an OCaml compiler
-source that you wish to install as an OPAM switch. It was designed for
-short-lived experiments with experimental branches of the compiler, so
-it infers the switch name from DCVS information (only git is
-currently supported).
-
-get-switch: returns the name of the OPAM switch inferred from DCVS information
-
-get-conf:   returns the OPAM configuration file inferred
-
-configure:  runs the ./configure script of the OCaml distribution
-            (OCaml needs to be told at ./configure time where it will
-             be installed, and we handle this for you, knowing where
-             OPAM will expect its stuff)
-
-install:    setups the OPAM switch and install it (will run 'make install')
-            you need to have compiled the distribution first 
-
-switch:     switches to this new OPAM compiler (you'll still need to setup env)
-
-reinstall:  reinstall the OPAM switch (useful if you changed the compiler source)
-
-uninstall:  removes the OPAM switch and its configuration
-
-help:       this message
-EOF
-        ;;
     *)
         echo $USAGE
         ;;
-       
 esac
