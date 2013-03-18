@@ -147,7 +147,7 @@ case "$1" in
         echo $SWITCH
         ;;
     get-conf)
-        echo $OPAM_COMP_DATA
+        echo -e $OPAM_COMP_DATA
         ;;
     configure)
         # configure the ocaml distribution for compilation
@@ -158,7 +158,7 @@ case "$1" in
         check_is_configured
         # configure the .opam switch
         mkdir -p $OPAM_COMP_DIR
-        echo $OPAM_COMP_DATA > $OPAM_COMP_PATH
+        echo -e $OPAM_COMP_DATA > $OPAM_COMP_PATH
         #will run 'make install'
         opam switch install $SWITCH
         ;;
