@@ -24,8 +24,9 @@ get-conf:   returns the OPAM configuration file inferred
 
 configure:  runs the ./configure script of the OCaml distribution
             (OCaml needs to be told at ./configure time where it will
-             be installed, and we handle this for you, knowing where
-             OPAM will expect its stuff)
+            be installed, and we handle this for you, knowing where
+            OPAM will expect its stuff); you can pass it arguments
+            expected by the configure script (eg. --no-tk)
 
 install:    setups the OPAM switch and install it (will run 'make install')
             you need to have compiled the distribution first 
