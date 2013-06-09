@@ -84,7 +84,10 @@ VERSION=`head -n 1 VERSION | sed s/+.*//g`
 # some DCVS-specific logic to infer the branch name
 #   I have only implemented the git logic, please feel free
 #   to send me code for, for example, a SVN equivalent
-BRANCH=`git branch | grep "^*" | cut -d' ' -f2`
+if [ -v FORCE_BRANCH ]
+then BRANCH=$FORCE_BRANCH
+else BRANCH=`git branch | grep "^*" | cut -d' ' -f2`
+fi
 
 # the name of the corresponding OPAM switch
 SWITCH=${VERSION}+git-${BRANCH}
@@ -129,6 +132,11 @@ Error: the ./configure script appear to not have been run by this script:
          PREFIX=$PREFIX
        Setting up OPAM in this way would prevent its installation from working
        properly.
+
+       Note: if the wrong prefix comes from a wrong detection of the
+       git branch (eg. during a bisection), you can set the
+       FORCE_BRANCH variable to force a given value to be used as the
+       branch name during PREFIX inference.
 EOF
         exit 1
     fi
