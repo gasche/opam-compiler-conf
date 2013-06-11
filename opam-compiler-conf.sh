@@ -86,7 +86,7 @@ VERSION=`head -n 1 VERSION | sed s/+.*//g`
 #   to send me code for, for example, a SVN equivalent
 if [ -v FORCE_BRANCH ]
 then BRANCH=$FORCE_BRANCH
-else BRANCH=`git branch | grep "^*" | cut -d' ' -f2`
+else BRANCH=`git symbolic-ref --short -q HEAD`
 fi
 
 # the name of the corresponding OPAM switch
