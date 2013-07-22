@@ -1,3 +1,4 @@
+#!/bin/bash
 # the path to the OPAM installation
 OPAM=~/.opam
 
