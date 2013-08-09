@@ -2,7 +2,7 @@
 # the path to the OPAM installation
 OPAM=~/.opam
 
-USAGE="available commands: get-switch get-conf configure\
+USAGE="available commands: get-switch get-conf get-descr configure\
                            install switch reinstall remove|uninstall\
                            help"
 
@@ -20,6 +20,8 @@ currently supported).
 get-switch: returns the name of the OPAM switch inferred from DCVS information
 
 get-conf:   returns the OPAM configuration file inferred
+
+get-descr:  returns the OPAM description file inferred
 
 configure:  runs the ./configure script of the OCaml distribution
             (OCaml needs to be told at ./configure time where it will
@@ -90,20 +92,27 @@ then BRANCH=$FORCE_BRANCH
 else BRANCH=`git symbolic-ref --short -q HEAD`
 fi
 
+VERSION_OPAM="${VERSION}local"
+
 # the name of the corresponding OPAM switch
-SWITCH=${VERSION}+git-${BRANCH}
+SWITCH=${VERSION_OPAM}+git-${BRANCH}
 
 # the prefix passed to the ocaml distribution's ./configure, inside the opam repo
 PREFIX=$OPAM/$SWITCH
 
 # create a correponding OPAM compiler
+if [[ "$(opam --version)" < "1.1.0" ]] ; then
 OPAM_COMP_DIR=$OPAM/compilers
+else
+OPAM_COMP_DIR=$OPAM/compilers/${VERSION_OPAM}/$SWITCH
+fi
 OPAM_COMP_PATH=$OPAM_COMP_DIR/$SWITCH.comp
+OPAM_DESCR_PATH=$OPAM_COMP_DIR/$SWITCH.descr
 
 PWD=`pwd`
 OPAM_COMP_DATA="
 opam-version: \"1\"\n\
-version: \"$VERSION\"\n\
+version: \"${VERSION_OPAM}\"\n\
 src: \"$PWD\"\n\
 build: [\n\
   [\"%{make}%\" \"install\"]\n\
@@ -113,6 +122,7 @@ env: [\n\
 ]\n\
 "
 
+OPAM_DESCR_DATA="Local checkout of ${VERSION} at ${PWD}"
 
 check_is_configured() {
     if [ ! -f "config/Makefile" ]
@@ -159,6 +169,9 @@ case "$1" in
     get-conf)
         echo -e $OPAM_COMP_DATA
         ;;
+    get-descr)
+        echo -e $OPAM_DESCR_DATA
+        ;;
     configure)
         # configure the ocaml distribution for compilation
         shift
@@ -170,6 +183,7 @@ case "$1" in
         # configure the .opam switch
         mkdir -p $OPAM_COMP_DIR
         echo -e $OPAM_COMP_DATA > $OPAM_COMP_PATH
+        echo -e -n $OPAM_DESCR_DATA > $OPAM_DESCR_PATH
         #will run 'make install'
         opam switch install $SWITCH
         ;;
