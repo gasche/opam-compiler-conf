@@ -7,7 +7,7 @@ then
 fi
 
 # the path to the OPAM installation
-OPAMDIR=~/.opam
+OPAMDIR=$(opam config var root)
 
 USAGE="available commands: get-switch get-conf check-conf get-descr\
                            configure install switch reinstall\
