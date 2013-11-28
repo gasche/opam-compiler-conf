@@ -1,6 +1,6 @@
 #!/bin/bash
 # the path to the OPAM installation
-OPAM=~/.opam
+OPAM=$(opam config var root)
 
 USAGE="available commands: get-switch get-conf get-descr configure\
                            install switch reinstall remove|uninstall\
