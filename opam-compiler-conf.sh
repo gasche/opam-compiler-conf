@@ -1,6 +1,13 @@
 #!/bin/bash
+
+#the "opam" command to use
+if [ ! -v OPAM ]
+then
+    OPAM=opam
+fi
+
 # the path to the OPAM installation
-OPAM=~/.opam
+OPAMDIR=~/.opam
 
 USAGE="available commands: get-switch get-conf get-descr configure\
                            install switch reinstall remove|uninstall\
@@ -98,13 +105,13 @@ VERSION_OPAM="${VERSION}local"
 SWITCH=${VERSION_OPAM}+git-${BRANCH}
 
 # the prefix passed to the ocaml distribution's ./configure, inside the opam repo
-PREFIX=$OPAM/$SWITCH
+PREFIX=$OPAMDIR/$SWITCH
 
 # create a correponding OPAM compiler
-if [[ "$(opam --version)" < "1.1.0" ]] ; then
-OPAM_COMP_DIR=$OPAM/compilers
+if [[ "$($OPAM --version)" < "1.1.0" ]] ; then
+OPAM_COMP_DIR=$OPAMDIR/compilers
 else
-OPAM_COMP_DIR=$OPAM/compilers/${VERSION_OPAM}/$SWITCH
+OPAM_COMP_DIR=$OPAMDIR/compilers/${VERSION_OPAM}/$SWITCH
 fi
 OPAM_COMP_PATH=$OPAM_COMP_DIR/$SWITCH.comp
 OPAM_DESCR_PATH=$OPAM_COMP_DIR/$SWITCH.descr
@@ -185,26 +192,26 @@ case "$1" in
         echo -e $OPAM_COMP_DATA > $OPAM_COMP_PATH
         echo -e -n $OPAM_DESCR_DATA > $OPAM_DESCR_PATH
         #will run 'make install'
-        opam switch install $SWITCH
+        $OPAM switch install $SWITCH
         ;;
     switch)
         check_is_configured
         check_is_installed
-        opam switch $SWITCH
+        $OPAM switch $SWITCH
         ;;
     reinstall)
         check_is_configured
         check_is_installed
-        opam switch reinstall $SWITCH
+        $OPAM switch reinstall $SWITCH
         ;;
     remove|uninstall)
         check_is_installed
         if [ "$SWITCH" = `opam switch show` ]
         then
             echo "You are still on the switch '$SWITCH', switching to 'system' to uninstall."
-            opam switch system
+            $OPAM switch system
         fi
-        opam switch remove $SWITCH
+        $OPAM switch remove $SWITCH
         rm $OPAM_COMP_PATH
         ;;
     *)
