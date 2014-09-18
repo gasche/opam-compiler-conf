@@ -116,11 +116,23 @@ fi
 OPAM_COMP_PATH=$OPAM_COMP_DIR/$SWITCH.comp
 OPAM_DESCR_PATH=$OPAM_COMP_DIR/$SWITCH.descr
 
+# "src: $PATH" is the standard way to indicate the compiler source,
+# but recent OPAM versions are too clever at finding that this is
+# a git-versioned directory and clone it in a way that breaks
+# opam-compiler-conf.sh. On recent-enough version we therefore use
+# "local: $PATH" instead, which explicitly specifies that this must be
+# used as local source rather than a git-versioned resource.
+if [[ "$($OPAM --version)" < "1.2.0" ]] ; then
+SRC_KEY=src
+else
+SRC_KEY=local
+fi
+
 PWD=`pwd`
 OPAM_COMP_DATA="
 opam-version: \"1\"\n\
 version: \"${VERSION_OPAM}\"\n\
-src: \"$PWD\"\n\
+$SRC_KEY: \"$PWD\"\n\
 build: [\n\
   [\"%{make}%\" \"install\"]\n\
 ]\n\
