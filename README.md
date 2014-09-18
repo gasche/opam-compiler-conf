@@ -5,7 +5,12 @@ A small script to create short-lived OPAM compiler switches from experimental OC
 
 Usage:
 ```
-sh opam-compiler-conf.sh <command>
+bash opam-compiler-conf.sh <command>
+```
+
+Or, after `make BINDIR=~/.local/bin install`:
+```
+opam compiler-conf <command>
 ```
 
 Here is the output from the 'help' command:
