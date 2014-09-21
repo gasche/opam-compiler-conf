@@ -37,7 +37,7 @@ configure:  runs the ./configure script of the OCaml distribution
             expected by the configure script (eg. --no-tk)
 
 install:    setups the OPAM switch and install it (will run 'make install')
-            you need to have compiled the distribution first 
+            you need to have compiled the distribution first
 
 switch:     switches to this new OPAM compiler (you'll still need to setup env)
 
@@ -188,6 +188,20 @@ check_is_installed() {
     fi
 }
 
+do_install() {
+    # configure the .opam switch
+    mkdir -p $OPAM_COMP_DIR
+    echo -e $OPAM_COMP_DATA > $OPAM_COMP_PATH
+    echo -e -n $OPAM_DESCR_DATA > $OPAM_DESCR_PATH
+    #will run 'make install'
+    $OPAM switch install $SWITCH
+}
+
+do_reinstall() {
+    check_is_installed
+    $OPAM switch reinstall $SWITCH
+}
+
 # main :: IO ()   ;-)
 case "$1" in
     get-switch)
@@ -207,12 +221,7 @@ case "$1" in
     install)
         # check that ./configure was run
         check_is_configured
-        # configure the .opam switch
-        mkdir -p $OPAM_COMP_DIR
-        echo -e $OPAM_COMP_DATA > $OPAM_COMP_PATH
-        echo -e -n $OPAM_DESCR_DATA > $OPAM_DESCR_PATH
-        #will run 'make install'
-        $OPAM switch install $SWITCH
+        do_install
         ;;
     switch)
         check_is_configured
@@ -221,8 +230,12 @@ case "$1" in
         ;;
     reinstall)
         check_is_configured
-        check_is_installed
-        $OPAM switch reinstall $SWITCH
+        if [ ! -f "$OPAM_COMP_PATH" ]
+        then
+            do_install
+        else
+            do_reinstall
+        fi
         ;;
     remove|uninstall)
         check_is_installed
