@@ -99,7 +99,10 @@ then BRANCH=$FORCE_BRANCH
 else BRANCH=`git symbolic-ref --short -q HEAD`
 fi
 
-VERSION_OPAM="${VERSION}local"
+if [ -v FORCE_VERSION ]
+then VERSION_OPAM=$FORCE_VERSION
+else VERSION_OPAM="${VERSION}local"
+fi
 
 # the name of the corresponding OPAM switch
 SWITCH=${VERSION_OPAM}+git-${BRANCH}
