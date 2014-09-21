@@ -101,11 +101,11 @@ fi
 
 if [ -v FORCE_VERSION ]
 then VERSION_OPAM=$FORCE_VERSION
-else VERSION_OPAM="${VERSION}local"
+else VERSION_OPAM="${VERSION}"
 fi
 
 # the name of the corresponding OPAM switch
-SWITCH=${VERSION_OPAM}+git-${BRANCH}
+SWITCH=${VERSION_OPAM}+local-git-${BRANCH}
 
 # the prefix passed to the ocaml distribution's ./configure, inside the opam repo
 PREFIX=$OPAMDIR/$SWITCH
