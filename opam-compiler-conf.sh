@@ -139,6 +139,11 @@ $SRC_KEY: \"$PWD\"\n\
 build: [\n\
   [\"%{make}%\" \"install\"]\n\
 ]\n\
+packages: [\n\
+  \"base-unix\"\n\
+  \"base-bigarray\"\n\
+  \"base-threads\"\n\
+]\n\
 env: [\n\
   [ CAML_LD_LIBRARY_PATH = \"%{lib}%/stublibs\" ]\n\
 ]\n\
