@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #the "opam" command to use
-if [ ! -v OPAM ]
+if [ -z "$OPAM" ]
 then
     OPAM=opam
 fi
@@ -94,12 +94,12 @@ VERSION=`head -n 1 VERSION | sed s/+.*//g`
 # some DCVS-specific logic to infer the branch name
 #   I have only implemented the git logic, please feel free
 #   to send me code for, for example, a SVN equivalent
-if [ -v FORCE_BRANCH ]
+if [ ! -z "$FORCE_BRANCH" ]
 then BRANCH=$FORCE_BRANCH
 else BRANCH=`git symbolic-ref --short -q HEAD`
 fi
 
-if [ -v FORCE_VERSION ]
+if [ ! -z "$FORCE_VERSION" ]
 then VERSION_OPAM=$FORCE_VERSION
 else VERSION_OPAM="${VERSION}"
 fi
