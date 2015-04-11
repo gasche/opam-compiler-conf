@@ -9,9 +9,9 @@ fi
 # the path to the OPAM installation
 OPAMDIR=~/.opam
 
-USAGE="available commands: get-switch get-conf get-descr configure\
-                           install switch reinstall remove|uninstall\
-                           help"
+USAGE="available commands: get-switch get-conf check-conf get-descr\
+                           configure install switch reinstall\
+                           remove|uninstall help"
 
 case $1 in
     ""|help)
@@ -44,6 +44,12 @@ switch:     switches to this new OPAM compiler (you'll still need to setup env)
 reinstall:  reinstall the OPAM switch (useful if you changed the compiler source)
 
 uninstall:  removes the OPAM switch and its configuration
+
+check-conf: checks that the last configured switch agrees with the
+            current DCVS state (branch). This is useful if you have
+            played with other branches (and thus other switches) and
+            don't remember whether you should reconfigure before
+            recompiling.
 
 help:       this message
 EOF
@@ -158,11 +164,9 @@ check_is_configured() {
         exit 1
     fi
     CONF_PREFIX=`grep "^PREFIX=" config/Makefile | head -n1`
-    if [  "$CONF_PREFIX" = "PREFIX=$PREFIX" ]
+    if [ ! "$CONF_PREFIX" = "PREFIX=$PREFIX" ]
     then
-        echo
-    else
-        cat <<EOF
+       cat <<EOF
 Error: the ./configure script appear to not have been run by this script:
        its PREFIX setting
          $CONF_PREFIX
@@ -206,6 +210,11 @@ do_reinstall() {
 case "$1" in
     get-switch)
         echo $SWITCH
+        ;;
+    check-conf)
+        check_is_configured
+        echo -e "Your opam compiler switch is correctly configured."
+        echo -e "You can build the compiler, then run the 'install' command."
         ;;
     get-conf)
         echo -e $OPAM_COMP_DATA
