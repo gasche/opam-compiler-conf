@@ -225,7 +225,7 @@ case "$1" in
     configure)
         # configure the ocaml distribution for compilation
         shift
-        ./configure --prefix $PREFIX $*
+        ./configure --prefix $PREFIX "$@"
         ;;
     install)
         # check that ./configure was run
