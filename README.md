@@ -15,7 +15,7 @@ opam compiler-conf <command>
 
 Here is the output from the 'help' command:
 ```
-available commands: get-switch get-conf configure install switch reinstall remove|uninstall help
+available commands: get-switch get-conf check-conf get-descr configure install switch reinstall remove|uninstall help
 
 You should run this script from the directory of an OCaml compiler
 source that you wish to install as an OPAM switch. It was designed for
@@ -23,9 +23,33 @@ short-lived experiments with experimental branches of the compiler, so
 it infers the switch name from DCVS information (only git is
 currently supported).
 
+The to workflow should be as follows, from the root directory of an
+OCaml source tree:
+
+    opam compiler-conf configure
+    make world.opt # or any way to build the compiler
+    opam compiler-conf install # gives you a new switch
+
+If you already have a switch for this compiler branch installed, then
+you should note that
+
+    opam compiler-conf reinstall
+
+will recompile the OPAM packages in this switch, while just running
+
+    make install
+
+will simply overwrite the compiler's installation. This can save time
+when you know the compiler change will not affect package compilation
+in any way.
+
+The full list of commands is the following:
+
 get-switch: returns the name of the OPAM switch inferred from DCVS information
 
 get-conf:   returns the OPAM configuration file inferred
+
+get-descr:  returns the OPAM description file inferred
 
 configure:  runs the ./configure script of the OCaml distribution
             (OCaml needs to be told at ./configure time where it will
@@ -34,7 +58,7 @@ configure:  runs the ./configure script of the OCaml distribution
             expected by the configure script (eg. --no-tk)
 
 install:    setups the OPAM switch and install it (will run 'make install')
-            you need to have compiled the distribution first 
+            you need to have compiled the distribution first
 
 switch:     switches to this new OPAM compiler (you'll still need to setup env)
 
@@ -42,5 +66,12 @@ reinstall:  reinstall the OPAM switch (useful if you changed the compiler source
 
 uninstall:  removes the OPAM switch and its configuration
 
+check-conf: checks that the last configured switch agrees with the
+            current DCVS state (branch). This is useful if you have
+            played with other branches (and thus other switches) and
+            don't remember whether you should reconfigure before
+            recompiling.
+
 help:       this message
+
 ```
