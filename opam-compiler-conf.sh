@@ -24,6 +24,28 @@ short-lived experiments with experimental branches of the compiler, so
 it infers the switch name from DCVS information (only git is
 currently supported).
 
+The to workflow should be as follows, from the root directory of an
+OCaml source tree:
+
+    opam compiler-conf configure
+    make world.opt # or any way to build the compiler
+    opam compiler-conf install # gives you a new switch
+
+If you already have a switch for this compiler branch installed, then
+you should note that
+
+    opam compiler-conf reinstall
+
+will recompile the OPAM packages in this switch, while just running
+
+    make install
+
+will simply overwrite the compiler's installation. This can save time
+when you know the compiler change will not affect package compilation
+in any way.
+
+The full list of commands is the following:
+
 get-switch: returns the name of the OPAM switch inferred from DCVS information
 
 get-conf:   returns the OPAM configuration file inferred
