@@ -73,6 +73,8 @@ check-conf: checks that the last configured switch agrees with the
             don't remember whether you should reconfigure before
             recompiling.
 
+get-paths:  returns inferred paths (for debugging purposes)
+
 help:       this message
 EOF
         exit 0
@@ -228,6 +230,23 @@ do_reinstall() {
     $OPAM switch reinstall $SWITCH
 }
 
+do_uninstall() {
+    if [ "$SWITCH" = $(opam switch show) ]
+    then
+        echo "You are still on the switch '$SWITCH', switching to 'system' to uninstall."
+        $OPAM switch system
+    fi
+    $OPAM switch remove $SWITCH
+    # issue #8: if users get a yes/no choice and choose no, the remove
+    # command above will return (with no particular exit code), yet
+    # the switch is not uninstalled; do not remove
+    # $OPAM_COMP_PATH in this case.
+    if [ ! -d $PREFIX ]
+    then
+        rm $OPAM_COMP_PATH
+    fi
+}
+
 # main :: IO ()   ;-)
 case "$1" in
     get-switch)
@@ -243,6 +262,12 @@ case "$1" in
         ;;
     get-descr)
         echo -e $OPAM_DESCR_DATA
+        ;;
+    get-paths)
+        echo "PREFIX=$PREFIX"
+        echo "OPAM_COMP_DIR=$OPAM_COMP_DIR"
+        echo "OPAM_COMP_PATH=$OPAM_COMP_PATH"
+        echo "OPAM_DESCR_PATH=$OPAM_DESCR_PATH"
         ;;
     configure)
         # configure the ocaml distribution for compilation
@@ -270,13 +295,7 @@ case "$1" in
         ;;
     remove|uninstall)
         check_is_installed
-        if [ "$SWITCH" = `opam switch show` ]
-        then
-            echo "You are still on the switch '$SWITCH', switching to 'system' to uninstall."
-            $OPAM switch system
-        fi
-        $OPAM switch remove $SWITCH
-        rm $OPAM_COMP_PATH
+        do_uninstall
         ;;
     *)
         echo $USAGE
