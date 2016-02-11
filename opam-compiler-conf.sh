@@ -13,6 +13,11 @@ USAGE="available commands: get-switch get-conf check-conf get-descr\
                            configure install switch reinstall\
                            remove|uninstall help"
 
+if [ -z "$BASE_PACKAGES" ]
+then
+    BASE_PACKAGES="base-unix base-bigarray threads"
+fi
+
 case $1 in
     ""|help)
         echo $USAGE
@@ -170,9 +175,7 @@ build: [\n\
   [\"%{make}%\" \"install\"]\n\
 ]\n\
 packages: [\n\
-  \"base-unix\"\n\
-  \"base-bigarray\"\n\
-  \"base-threads\"\n\
+  $(for b in $BASE_PACKAGES; do echo \"$b\"; done)\n\
 ]\n\
 env: [\n\
   [ CAML_LD_LIBRARY_PATH = \"%{lib}%/stublibs\" ]\n\
