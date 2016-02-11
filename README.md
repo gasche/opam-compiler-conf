@@ -13,7 +13,7 @@ Or, after `make BINDIR=~/.local/bin install`:
 opam compiler-conf <command>
 ```
 
-Here is the output from the 'help' command:
+Here is the output of the 'help' command:
 ```
 available commands: get-switch get-conf check-conf get-descr configure install switch reinstall remove|uninstall help
 
@@ -42,6 +42,7 @@ will recompile the OPAM packages in this switch, while just running
 will simply overwrite the compiler's installation. This can save time
 when you know the compiler change will not affect package compilation
 in any way.
+
 
 The full list of commands is the following:
 
@@ -72,6 +73,29 @@ check-conf: checks that the last configured switch agrees with the
             don't remember whether you should reconfigure before
             recompiling.
 
+get-paths:  returns inferred paths (for debugging purposes)
+
 help:       this message
+
+
+For configuration, the script supports the following environment
+variables:
+
+BASE_PACKAGES: Specifies the list of base-packages that a compiler
+  description should list. It is a space-separated list of words.
+
+  Default: "base-unix base-bigarray threads".
+
+FORCE_BRANCH: Overrides the detection of the branch name to specify
+  any name you want (it should be an alphanumeric word with
+  no spaces). For example, this is useful when you are checked out of
+  your branch but still want to reinstall the current state at the
+  same switch.
+
+FORCE_VERSION: Overrides the compiler-version detection.
+
+OPAM: the opam command to use.
+
+  Default: "opam".
 
 ```
