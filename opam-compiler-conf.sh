@@ -24,7 +24,7 @@ short-lived experiments with experimental branches of the compiler, so
 it infers the switch name from DCVS information (only git is
 currently supported).
 
-The to workflow should be as follows, from the root directory of an
+The workflow should be as follows, from the root directory of an
 OCaml source tree:
 
     opam compiler-conf configure
