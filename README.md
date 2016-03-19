@@ -84,7 +84,7 @@ variables:
 BASE_PACKAGES: Specifies the list of base-packages that a compiler
   description should list. It is a space-separated list of words.
 
-  Default: "base-unix base-bigarray threads".
+  Default: "base-unix base-bigarray base-threads".
 
 FORCE_BRANCH: Overrides the detection of the branch name to specify
   any name you want (it should be an alphanumeric word with

@@ -15,7 +15,7 @@ USAGE="available commands: get-switch get-conf check-conf get-descr\
 
 if [ -z "$BASE_PACKAGES" ]
 then
-    BASE_PACKAGES="base-unix base-bigarray threads"
+    BASE_PACKAGES="base-unix base-bigarray base-threads"
 fi
 
 case $1 in
