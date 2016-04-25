@@ -172,10 +172,10 @@ PREFIX=$OPAMDIR/$SWITCH
 if [[ "$($OPAM --version)" < "1.1.0" ]] ; then
 OPAM_COMP_DIR=$OPAMDIR/compilers
 else
-OPAM_COMP_DIR=$OPAMDIR/compilers/${VERSION_OPAM}/$SWITCH
+OPAM_COMP_DIR=$OPAMDIR/packages/ocaml/ocaml.$SWITCH
 fi
-OPAM_COMP_PATH=$OPAM_COMP_DIR/$SWITCH.comp
-OPAM_DESCR_PATH=$OPAM_COMP_DIR/$SWITCH.descr
+OPAM_COMP_PATH=$OPAM_COMP_DIR/opam
+OPAM_CONF_IN_PATH="$OPAM_COMP_DIR/files/ocaml.config.in"
 
 # "src: $PATH" is the standard way to indicate the compiler source,
 # but recent OPAM versions are too clever at finding that this is
@@ -191,21 +191,27 @@ fi
 
 PWD=`pwd`
 OPAM_COMP_DATA="
-opam-version: \"1\"\n\
-version: \"${VERSION_OPAM}\"\n\
-$SRC_KEY: \"$PWD\"\n\
-build: [\n\
-  [\"%{make}%\" \"install\"]\n\
-]\n\
-packages: [\n\
-  $(for b in $BASE_PACKAGES; do echo \"$b\"; done)\n\
-]\n\
-env: [\n\
-  [ CAML_LD_LIBRARY_PATH = \"%{lib}%/stublibs\" ]\n\
-]\n\
+opam-version: \"2.0\"\n\
+depends: [$BASE_PACKAGES]\n\
+flags: compiler\n\
+setenv: CAML_LD_LIBRARY_PATH = \"%{lib}%/stublibs\"\n\
+build: [[make \"install\"]]\n\
+substs: \"ocaml.config\"\n\
+url {$SRC_KEY: \"$PWD\"}\n\
 "
 
-OPAM_DESCR_DATA="Local checkout of ${VERSION} at ${PWD}"
+OPAM_CONF_IN="
+opam-version: \"2.0~alpha\"\n\
+variables {\n\
+  ocaml-version: \"$VERSION_OPAM\"\n\
+  compiler: \"$SWITCH\"\n\
+  preinstalled: false\n\
+  ocaml-native: true\n\
+  ocaml-native-tools: true\n\
+  ocaml-native-dynlink: true\n\
+  ocaml-stubsdir: \"%{lib}%/stublibs\"\n\
+}\n\
+"
 
 check_is_configured() {
     if [ ! -f "config/Makefile" ]
@@ -244,9 +250,9 @@ check_is_installed() {
 
 do_install() {
     # configure the .opam switch
-    mkdir -p $OPAM_COMP_DIR
+    mkdir -p $OPAM_COMP_DIR/files/
     echo -e $OPAM_COMP_DATA > $OPAM_COMP_PATH
-    echo -e -n $OPAM_DESCR_DATA > $OPAM_DESCR_PATH
+    echo -e $OPAM_CONF_IN > $OPAM_CONF_IN_PATH
     #will run 'make install'
     $OPAM switch install $SWITCH
 }
