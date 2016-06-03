@@ -9,9 +9,11 @@ fi
 # the path to the OPAM installation
 OPAMDIR=$(opam config var root)
 
-USAGE="available commands: get-switch get-conf check-conf get-descr\
-                           configure install switch reinstall\
-                           remove|uninstall help"
+USAGE="available commands:\
+  {get,show}-switch {get,show}-conf {get,show}-descr {get,show}-paths\
+  check-conf\
+  configure install switch reinstall {remove,uninstall}\
+  help"
 
 if [ -z "$BASE_PACKAGES" ]
 then
@@ -52,10 +54,13 @@ in any way.
 
 The full list of commands is the following:
 
+show-switch:
 get-switch: returns the name of the OPAM switch inferred from DCVS information
 
+show-conf:
 get-conf:   returns the OPAM configuration file inferred
 
+show-descr:
 get-descr:  returns the OPAM description file inferred
 
 configure:  runs the ./configure script of the OCaml distribution
@@ -79,7 +84,8 @@ check-conf: checks that the last configured switch agrees with the
             don't remember whether you should reconfigure before
             recompiling.
 
-get-paths:  returns inferred paths (for debugging purposes)
+show-paths:
+get-paths:  show inferred paths (for debugging purposes)
 
 help:       this message
 
@@ -275,6 +281,7 @@ do_uninstall() {
 
 # main :: IO ()   ;-)
 case "$1" in
+    show-switch) ;&
     get-switch)
         echo $SWITCH
         ;;
@@ -283,12 +290,15 @@ case "$1" in
         echo -e "Your opam compiler switch is correctly configured."
         echo -e "You can build the compiler, then run the 'install' command."
         ;;
+    show-conf) ;&
     get-conf)
         echo -e $OPAM_COMP_DATA
         ;;
+    show-descr) ;&
     get-descr)
         echo -e $OPAM_DESCR_DATA
         ;;
+    show-paths) ;&
     get-paths)
         echo "PREFIX=$PREFIX"
         echo "OPAM_COMP_DIR=$OPAM_COMP_DIR"
