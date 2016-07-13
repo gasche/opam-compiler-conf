@@ -153,7 +153,7 @@ EOF
     exit 1
 fi
 
-VERSION=`head -n 1 VERSION | sed s/+.*//g`
+VERSION=`head -n 1 VERSION | sed "s/+.*//g"`
 
 # some DCVS-specific logic to infer the branch name
 #   I have only implemented the git logic, please feel free
