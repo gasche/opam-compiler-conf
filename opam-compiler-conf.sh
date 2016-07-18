@@ -281,8 +281,7 @@ do_uninstall() {
 
 # main :: IO ()   ;-)
 case "$1" in
-    show-switch) ;&
-    get-switch)
+    show-switch|get-switch)
         echo $SWITCH
         ;;
     check-conf)
@@ -290,16 +289,13 @@ case "$1" in
         echo -e "Your opam compiler switch is correctly configured."
         echo -e "You can build the compiler, then run the 'install' command."
         ;;
-    show-conf) ;&
-    get-conf)
+    show-conf|get-conf)
         echo -e $OPAM_COMP_DATA
         ;;
-    show-descr) ;&
-    get-descr)
+    show-descr|get-descr)
         echo -e $OPAM_DESCR_DATA
         ;;
-    show-paths) ;&
-    get-paths)
+    show-paths|get-paths)
         echo "PREFIX=$PREFIX"
         echo "OPAM_COMP_DIR=$OPAM_COMP_DIR"
         echo "OPAM_COMP_PATH=$OPAM_COMP_PATH"
