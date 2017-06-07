@@ -8,6 +8,16 @@ fi
 
 # the path to the OPAM installation
 OPAMDIR=$(opam config var root)
+if [ -z "$OPAMDIR" ]
+then
+   echo
+   echo "Error: could not determine the opam root using 'opam config var root'."
+   echo "This may happen if you are on an switch that does not exist or was removed,"
+   echo "for example a switch created by this script then uninstalled."
+   echo "You should switch back to a working opam state before running this script."
+   echo "Exiting."
+   exit 2
+fi
 
 USAGE="available commands:\
   {get,show}-switch {get,show}-conf {get,show}-descr {get,show}-paths\
