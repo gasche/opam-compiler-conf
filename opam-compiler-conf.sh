@@ -23,7 +23,7 @@ USAGE="available commands:\
   {get,show}-switch {get,show}-conf {get,show}-descr {get,show}-paths\
   check-conf\
   configure install switch reinstall {remove,uninstall}\
-  help"
+  trouble help"
 
 if [ -z "$BASE_PACKAGES" ]
 then
@@ -97,6 +97,8 @@ check-conf: checks that the last configured switch agrees with the
 show-paths:
 get-paths:  show inferred paths (for debugging purposes)
 
+trouble:    troubleshooting tips
+
 help:       this message
 
 
@@ -119,11 +121,39 @@ FORCE_VERSION: Overrides the compiler-version detection.
 OPAM: the opam command to use.
 
   Default: "opam".
-
 EOF
         exit 0
         ;;
 esac
+
+troubleshooting_tips() {
+    cat<<EOF
+Troubleshooting tips:
+
+This script tries to be robust, but sometimes mistakes happen and the
+corresponding opam switch may be left in an inconsistent state. Here
+is what we have learned so far:
+
+0. Bash/shell (used to implement this script) have weird corner-case
+   portability issues that have affected some of our users. If the
+   script is obviously broken on your machine, feel free to open
+   a ticket on the issue tracket
+   ( https://github.com/gasche/opam-compiler-conf/issues/ ). The
+   output of the 'get-conf' and 'get-paths' command can usually tell
+   if something is wrong, and including them in the ticket can help.
+
+1. We have experienced strange 'install' failures caused by an
+   incorrect opam state where the switch is not installed but still
+   occurs as a line in the `opam config var root`/aliases
+   file. Removing the line manually may help.
+
+2. We have experienced situations where opam would switch to the
+   switch determined by this script (the one returned by the
+   'get-switch' command) but then remove this script, leaving further
+   opam commands in disarray. When that happens, switching back
+   to an existing switch should work.
+EOF
+}
 
 # OPAM will need version information to accept package installation
 # this is useful if you try to install packages that only support
@@ -342,6 +372,9 @@ case "$1" in
     remove|uninstall)
         check_is_installed
         do_uninstall
+        ;;
+    trouble)
+        troubleshooting_tips
         ;;
     *)
         echo $USAGE
