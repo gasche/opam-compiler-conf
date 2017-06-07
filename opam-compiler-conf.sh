@@ -196,22 +196,25 @@ SRC_KEY=local
 fi
 
 PWD=`pwd`
-OPAM_COMP_DATA="
-opam-version: \"1\"\n\
-version: \"${VERSION_OPAM}\"\n\
-$SRC_KEY: \"$PWD\"\n\
-build: [\n\
-  [\"%{make}%\" \"install\"]\n\
-]\n\
-packages: [\n\
-  $(for b in $BASE_PACKAGES; do echo \"$b\"; done)\n\
-]\n\
-env: [\n\
-  [ CAML_LD_LIBRARY_PATH = \"%{lib}%/stublibs\" ]\n\
-]\n\
-"
 
-OPAM_DESCR_DATA="Local checkout of ${VERSION} at ${PWD}"
+output_comp_data() {
+    echo "opam-version: \"1\""
+    echo "version: \"${VERSION_OPAM}\""
+    echo "$SRC_KEY: \"$PWD\""
+    echo "build: ["
+    echo "  [\"%{make}%\" \"install\"]"
+    echo "]"
+    echo "packages: ["
+    for b in $BASE_PACKAGES; do echo "  \"$b\""; done
+    echo "]"
+    echo "env: ["
+    echo "  [ CAML_LD_LIBRARY_PATH = \"%{lib}%/stublibs\" ]"
+    echo "]"
+}
+
+output_descr_data() {
+    echo "Local checkout of ${VERSION} at ${PWD}"
+}
 
 check_is_configured() {
     if [ ! -f "config/Makefile" ]
@@ -251,8 +254,9 @@ check_is_installed() {
 do_install() {
     # configure the .opam switch
     mkdir -p $OPAM_COMP_DIR
-    echo -e $OPAM_COMP_DATA > $OPAM_COMP_PATH
-    echo -e -n $OPAM_DESCR_DATA > $OPAM_DESCR_PATH
+    # we previously used 'echo -e', but OSX does not support it
+    (output_comp_data) > $OPAM_COMP_PATH
+    (output_descr_data) > $OPAM_DESCR_PATH
     #will run 'make install'
     $OPAM switch install $SWITCH
 }
@@ -286,14 +290,14 @@ case "$1" in
         ;;
     check-conf)
         check_is_configured
-        echo -e "Your opam compiler switch is correctly configured."
-        echo -e "You can build the compiler, then run the 'install' command."
+        echo "Your opam compiler switch is correctly configured."
+        echo "You can build the compiler, then run the 'install' command."
         ;;
     show-conf|get-conf)
-        echo -e $OPAM_COMP_DATA
+        output_comp_data
         ;;
     show-descr|get-descr)
-        echo -e $OPAM_DESCR_DATA
+        output_descr_data
         ;;
     show-paths|get-paths)
         echo "PREFIX=$PREFIX"
