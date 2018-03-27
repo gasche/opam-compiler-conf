@@ -262,8 +262,10 @@ check_is_configured() {
         echo "Error: You must run the 'configure' command first."
         exit 1
     fi
-    CONF_PREFIX=`grep "^PREFIX=" config/Makefile | head -n1`
-    if [ ! "$CONF_PREFIX" = "PREFIX=$PREFIX" ]
+    # the PREFIX variable appears #-escaped in config/Makefile
+    CONF_PREFIX=$(grep "^PREFIX=" config/Makefile | head -n1)
+    PREFIX_LINE="PREFIX=$(echo $PREFIX | sed 's/\#/\\#/g')"
+    if [ ! "$CONF_PREFIX" = "$PREFIX_LINE" ]
     then
        cat <<EOF
 Error: the ./configure script appear to not have been run by this script:
