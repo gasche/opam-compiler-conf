@@ -149,7 +149,7 @@ is what we have learned so far:
 
 2. We have experienced situations where opam would switch to the
    switch determined by this script (the one returned by the
-   'get-switch' command) but then remove this script, leaving further
+   'get-switch' command) but then remove this switch, leaving further
    opam commands in disarray. When that happens, switching back
    to an existing switch should work.
 EOF
