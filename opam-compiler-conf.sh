@@ -161,7 +161,7 @@ EOF
 # give a more-or-less valid indication of which version compatibility
 # you will support, and in practice it does the right thing.
 #
-# For example, the SVN trunk has his VERSION file set to
+# For example, the SVN trunk has its VERSION file set to
 # 4.01.0+dev... which, when stripped of the +dev part, reasonably
 # indicates a high-enough OCaml version.
 #
@@ -197,7 +197,7 @@ VERSION=`head -n 1 VERSION | sed "s/+.*//g"`
 
 # some DCVS-specific logic to infer the branch name
 #   I have only implemented the git logic, please feel free
-#   to send me code for, for example, a SVN equivalent
+#   to send me code for, for example, a mercurial equivalent
 if [ ! -z "$FORCE_BRANCH" ]
 then BRANCH=$FORCE_BRANCH
 else BRANCH=`git symbolic-ref --short -q HEAD`
@@ -315,7 +315,7 @@ do_uninstall() {
         $OPAM switch system
     fi
     $OPAM switch remove $SWITCH
-    # issue #8: if users get a yes/no choice and choose no, the remove
+    # issue #8: if users get a yes/no choice and chooses no, the remove
     # command above will return (with no particular exit code), yet
     # the switch is not uninstalled; do not remove
     # $OPAM_COMP_PATH in this case.
