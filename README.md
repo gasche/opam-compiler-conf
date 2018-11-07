@@ -3,6 +3,13 @@ opam-compiler-conf
 
 A small script to create short-lived OPAM compiler switches from experimental OCaml branches
 
+## Warning
+
+This tool currently only works with opam 1.x, not opam 2 that is nowadays the default. Sorry about that...
+See https://github.com/gasche/opam-compiler-conf/issues/14#issuecomment-427040608.
+
+## Documentation
+
 Usage:
 ```
 bash opam-compiler-conf.sh <command>
