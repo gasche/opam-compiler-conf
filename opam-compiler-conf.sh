@@ -6,17 +6,11 @@ then
     OPAM=opam
 fi
 
-# the path to the OPAM installation
-OPAMDIR=$(opam config var root)
+# the path to the OPAM installation; default to a local root
 if [ -z "$OPAMDIR" ]
 then
-   echo
-   echo "Error: could not determine the opam root using 'opam config var root'."
-   echo "This may happen if you are on an switch that does not exist or was removed,"
-   echo "for example a switch created by this script then uninstalled."
-   echo "You should switch back to a working opam state before running this script."
-   echo "Exiting."
-   exit 2
+    #OPAMDIR="$(pwd)/../_opam"
+    OPAMDIR=$(opam config var root)
 fi
 
 USAGE="available commands:\
@@ -142,12 +136,7 @@ is what we have learned so far:
    output of the 'get-conf' and 'get-paths' command can usually tell
    if something is wrong, and including them in the ticket can help.
 
-1. We have experienced strange 'install' failures caused by an
-   incorrect opam state where the switch is not installed but still
-   occurs as a line in the `opam config var root`/aliases
-   file. Removing the line manually may help.
-
-2. We have experienced situations where opam would switch to the
+1. We have experienced situations where opam would switch to the
    switch determined by this script (the one returned by the
    'get-switch' command) but then remove this switch, leaving further
    opam commands in disarray. When that happens, switching back
@@ -161,7 +150,7 @@ EOF
 # give a more-or-less valid indication of which version compatibility
 # you will support, and in practice it does the right thing.
 #
-# For example, the SVN trunk has its VERSION file set to
+# For example, the SVN trunk has his VERSION file set to
 # 4.01.0+dev... which, when stripped of the +dev part, reasonably
 # indicates a high-enough OCaml version.
 #
@@ -197,7 +186,7 @@ VERSION=`head -n 1 VERSION | sed "s/+.*//g"`
 
 # some DCVS-specific logic to infer the branch name
 #   I have only implemented the git logic, please feel free
-#   to send me code for, for example, a mercurial equivalent
+#   to send me code for, for example, a SVN equivalent
 if [ ! -z "$FORCE_BRANCH" ]
 then BRANCH=$FORCE_BRANCH
 else BRANCH=`git symbolic-ref --short -q HEAD`
@@ -212,7 +201,7 @@ fi
 SWITCH=${VERSION_OPAM}+local-git-${BRANCH}
 
 # the prefix passed to the ocaml distribution's ./configure, inside the opam repo
-PREFIX=$OPAMDIR/$SWITCH
+PREFIX=${OPAMDIR}
 
 # create a correponding OPAM compiler
 if [[ "$($OPAM --version)" < "1.1.0" ]] ; then
@@ -223,37 +212,25 @@ fi
 OPAM_COMP_PATH=$OPAM_COMP_DIR/$SWITCH.comp
 OPAM_DESCR_PATH=$OPAM_COMP_DIR/$SWITCH.descr
 
-# "src: $PATH" is the standard way to indicate the compiler source,
-# but recent OPAM versions are too clever at finding that this is
-# a git-versioned directory and clone it in a way that breaks
-# opam-compiler-conf.sh. On recent-enough version we therefore use
-# "local: $PATH" instead, which explicitly specifies that this must be
-# used as local source rather than a git-versioned resource.
-if [[ "$($OPAM --version)" < "1.2.0" ]] ; then
-SRC_KEY=src
-else
-SRC_KEY=local
-fi
-
 PWD=`pwd`
 
 output_comp_data() {
-    echo "opam-version: \"1\""
-    echo "version: \"${VERSION_OPAM}\""
-    echo "$SRC_KEY: \"$PWD\""
+    echo "opam-version: \"2.0\""
+    echo "synopsis: \"Local checkout of ${VERSION} at ${PWD}\""
+    echo "maintainer: \"<user@localhost>\""
+    echo "depends: ["
+    echo "  \"ocaml\" {= \"$VERSION_OPAM\" & post}"
+    for b in $BASE_PACKAGES; do echo "  \"$b\" {post}"; done
+    echo "]"
+    echo "conflict-class: \"ocaml-core-compiler\""
+    echo "flags: compiler"
+    echo "setenv: CAML_LD_LIBRARY_PATH = \"%{lib}%/stublibs\""
     echo "build: ["
     echo "  [\"%{make}%\" \"install\"]"
     echo "]"
-    echo "packages: ["
-    for b in $BASE_PACKAGES; do echo "  \"$b\""; done
-    echo "]"
-    echo "env: ["
-    echo "  [ CAML_LD_LIBRARY_PATH = \"%{lib}%/stublibs\" ]"
-    echo "]"
-}
-
-output_descr_data() {
-    echo "Local checkout of ${VERSION} at ${PWD}"
+    echo "authors: \"$USER\""
+    echo "homepage: \"file:///$pwd\""
+    echo "bug-reports: \"<user@localhost>\""
 }
 
 check_is_configured() {
@@ -298,7 +275,6 @@ do_install() {
     mkdir -p $OPAM_COMP_DIR
     # we previously used 'echo -e', but OSX does not support it
     (output_comp_data) > $OPAM_COMP_PATH
-    (output_descr_data) > $OPAM_DESCR_PATH
     #will run 'make install'
     $OPAM switch install $SWITCH
 }
